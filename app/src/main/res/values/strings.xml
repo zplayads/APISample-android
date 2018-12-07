@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PANoSDK</string>
+    <string name="filter_view_http_gizmos">http gizmos</string>
+    <string name="filter_view_example_gizmos">example gizmos</string>
+</resources>
