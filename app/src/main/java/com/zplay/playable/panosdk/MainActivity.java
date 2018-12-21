@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
             WebActivity.launch(this, trimContent);
         } else {
             trimContent = trimContent.replaceAll("\\\\\"", "\"");
-            trimContent = trimContent.replaceAll("\\\n", "\n");
+            trimContent = trimContent.replaceAll("\\\n", " ");
+            trimContent = trimContent.replaceAll("\\\\r\\\\n", " ");
             Log.d(TAG, "showWeb: " + trimContent);
             Log.d(TAG, "showWeb: " + "hello: \"");
             WebActivity.launch(this, trimContent, null, null);
