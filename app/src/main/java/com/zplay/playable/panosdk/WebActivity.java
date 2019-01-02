@@ -21,32 +21,40 @@ import android.widget.Toast;
 public class WebActivity extends Activity {
     private static final String TAG = "PA_no_SDK";
 
+    WebView mWebView;
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.web_activity);
         WebView.setWebContentsDebuggingEnabled(true);
-        WebView webView = findViewById(R.id.web_view);
+        mWebView = findViewById(R.id.web_view);
         String url = getIntent().getStringExtra("url");
         String data = getIntent().getStringExtra("data");
         String mimeType = getIntent().getStringExtra("mimeType");
         String encoding = getIntent().getStringExtra("encoding");
 
 
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
-        webView.addJavascriptInterface(new ZPLAYAdsJavascriptInterface(), "ZPLAYAds");
+        mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.getSettings().setMediaPlaybackRequiresUserGesture(false);
+        mWebView.addJavascriptInterface(new ZPLAYAdsJavascriptInterface(), "ZPLAYAds");
 
         if (!TextUtils.isEmpty(url)) {
-            webView.loadUrl(url);
+            mWebView.loadUrl(url);
         } else if (!TextUtils.isEmpty(data)) {
-            webView.loadDataWithBaseURL(null, data, mimeType, encoding, null);
+            mWebView.loadDataWithBaseURL(null, data, mimeType, encoding, null);
         } else {
             Toast.makeText(this, "oops~ not content to show.", Toast.LENGTH_SHORT).show();
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mWebView.destroy();
+        mWebView = null;
+    }
 
     private class ZPLAYAdsJavascriptInterface {
 
