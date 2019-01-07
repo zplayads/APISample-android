@@ -8,9 +8,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "cccB";
 
@@ -36,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             trimContent = trimContent.replaceAll("\\\\\"", "\"");
             trimContent = trimContent.replaceAll("\\\n", " ");
+            trimContent = trimContent.replaceAll("\\\t", " ");
             trimContent = trimContent.replaceAll("\\\\r\\\\n", " ");
             Log.d(TAG, "showWeb: " + trimContent);
             Log.d(TAG, "showWeb: " + "hello: \"");

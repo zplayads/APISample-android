@@ -4,12 +4,16 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 /**
@@ -39,6 +43,18 @@ public class WebActivity extends Activity {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setMediaPlaybackRequiresUserGesture(false);
         mWebView.addJavascriptInterface(new ZPLAYAdsJavascriptInterface(), "ZPLAYAds");
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                try {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, request.getUrl());
+                    startActivity(browserIntent);
+                } catch (Exception e) {
+                    Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl(), e);
+                }
+                return true;
+            }
+        });
 
         if (!TextUtils.isEmpty(url)) {
             mWebView.loadUrl(url);
@@ -64,15 +80,11 @@ public class WebActivity extends Activity {
             finish();
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @JavascriptInterface
         public void onInstallSelected() {
             // 当点击"安装"按钮时，触发该方法
-            final String marketLink = String.format("market://details?id=%s", "com.tencent.mm");
-            try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(marketLink));
-                startActivity(intent);
-            } catch (Exception ignore) {
-            }
+            Log.d(TAG, "onInstallSelected: no nothing.");
         }
 
     }
