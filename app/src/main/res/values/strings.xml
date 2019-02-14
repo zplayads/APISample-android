@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SimpleWeb</string>
+    <string name="app_name">APISimpleWeb</string>
     <string name="filter_view_http_gizmos">http gizmos</string>
     <string name="filter_view_example_gizmos">example gizmos</string>
 </resources>
