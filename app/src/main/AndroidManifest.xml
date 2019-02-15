@@ -51,6 +51,9 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
 
         </activity>
+        <activity
+            android:name=".WebAttachActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
     </application>
 
 </manifest>
