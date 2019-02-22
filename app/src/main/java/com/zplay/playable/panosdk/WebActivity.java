@@ -83,6 +83,15 @@ public class WebActivity extends Activity {
                 }
                 return true;
             }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (url.startsWith("mraid")) {
+                    handleMraidOpen(url);
+                    return true;
+                }
+                return super.shouldOverrideUrlLoading(view, url);
+            }
         });
 
         if (!TextUtils.isEmpty(url)) {
