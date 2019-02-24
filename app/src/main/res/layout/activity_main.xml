@@ -6,34 +6,67 @@
     android:orientation="vertical"
     tools:context="com.zplay.playable.panosdk.MainActivity">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="showWeb"
-        android:text="show bellow url or html data"
-        android:textAllCaps="false" />
-
     <EditText
         android:id="@+id/edit_text"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:hint="input url or HTML doc" />
-
-
-    <Button
-        android:id="@+id/load_doc_to_webview"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="loadDoc2WebView"
-        android:text="load html data to a webview"
-        android:textAllCaps="false" />
+        android:hint="input URL or HTML document"
+        android:maxHeight="250dp"
+        android:minHeight="80dp" />
 
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="showWeb2"
-        android:text="show the webview"
-        android:textAllCaps="false" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Solution A: " />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="show"
+            android:text="show"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="#222" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Solution B: " />
+
+        <Button
+            android:id="@+id/load_doc_to_webview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="preRenderHtml"
+            android:text="preRenderHtml"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:onClick="showPreRenderedView"
+            android:text="showPreRenderedView"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
 
 </LinearLayout>

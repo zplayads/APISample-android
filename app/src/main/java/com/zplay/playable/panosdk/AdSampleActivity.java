@@ -26,6 +26,8 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
+import static com.zplay.playable.panosdk.WebViewController.TEMP_KEY;
+
 /**
  * Description:
  * <p>
@@ -46,26 +48,25 @@ import java.nio.charset.StandardCharsets;
  * Created by lgd on 2018/10/11.
  */
 
-public class WebActivity extends Activity {
-    private static final String TAG = "PA_no_SDK";
+public class AdSampleActivity extends Activity {
+    private static final String TAG = "AdSampleActivity";
 
     WebView mWebView;
+    WebViewController mWebViewController;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.web_activity);
         WebView.setWebContentsDebuggingEnabled(true);
-        mWebView = findViewById(R.id.web_view);
-        String url = getIntent().getStringExtra("url");
-        String data = getIntent().getStringExtra("data");
-        String mimeType = getIntent().getStringExtra("mimeType");
-        String encoding = getIntent().getStringExtra("encoding");
 
+        mWebViewController = WebViewController.getWebViewController(TEMP_KEY);
+        if (mWebViewController == null) {
+            Log.e(TAG, "onCreate: Cannot found WebView. Activity finished.");
+            return;
+        }
+        mWebView = mWebViewController.getWebView();
 
-        mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.getSettings().setMediaPlaybackRequiresUserGesture(false);
         mWebView.addJavascriptInterface(new ZPLAYAdsJavascriptInterface(), "ZPLAYAds");
         mWebView.setWebViewClient(new WebViewClient() {
 
@@ -94,17 +95,21 @@ public class WebActivity extends Activity {
             }
         });
 
-        if (!TextUtils.isEmpty(url)) {
-            loadUrl(url);
-        } else if (!TextUtils.isEmpty(data)) {
-            loadHtmlData(data, mimeType, encoding);
-        } else {
-            Toast.makeText(this, "oops~ not content to show.", Toast.LENGTH_SHORT).show();
+        if (!mWebViewController.isCachedHtmlData()) {
+            if (mWebViewController.getHtmlData().startsWith("http")) {
+                loadUrl(mWebViewController.getHtmlData());
+            } else if (!TextUtils.isEmpty(mWebViewController.getHtmlData())) {
+                loadHtmlData(mWebViewController.getHtmlData());
+            } else {
+                Toast.makeText(this, "Html data is empty.", Toast.LENGTH_SHORT).show();
+            }
         }
+        setContentView(mWebView);
     }
 
     private void handleMraidOpen(String url) {
         try {
+            Log.d(TAG, "handleMraidOpen: " + url);
             String targetUrl = url.replace("mraid://open?url=", "");
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URLDecoder.decode(targetUrl, "UTF-8")));
             startActivity(browserIntent);
@@ -113,7 +118,7 @@ public class WebActivity extends Activity {
         }
     }
 
-    public void loadHtmlData(String data, String mimeType, String encoding) {
+    public void loadHtmlData(String data) {
         if (data == null) {
             return;
         }
@@ -127,7 +132,7 @@ public class WebActivity extends Activity {
         // Inject the MRAID JavaScript bridge.
         data = data.replace("<head>", "<head><script>" + Assets.MRAID_JS + "</script>");
 
-        mWebView.loadDataWithBaseURL(null, data, mimeType, encoding, null);
+        mWebView.loadDataWithBaseURL(null, data, "text/html", "UTF-8", null);
     }
 
     public void loadUrl(String url) {
@@ -172,7 +177,7 @@ public class WebActivity extends Activity {
                     mWebView.post(new Runnable() {
                         @Override
                         public void run() {
-                            loadHtmlData(html, "text/html", "UTF-8");
+                            loadHtmlData(html);
                         }
                     });
                 } catch (Exception e) {
@@ -196,8 +201,9 @@ public class WebActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mWebView.destroy();
-        mWebView = null;
+        if (mWebViewController != null) {
+            mWebViewController.destroy();
+        }
     }
 
     private class ZPLAYAdsJavascriptInterface {
@@ -205,29 +211,20 @@ public class WebActivity extends Activity {
         @JavascriptInterface
         public void onCloseSelected() {
             // 可玩广告点击关闭按钮时，触发该方法
-            finish();
+            Toast.makeText(AdSampleActivity.this, "got onCloseSelected event", Toast.LENGTH_SHORT).show();
         }
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @JavascriptInterface
         public void onInstallSelected() {
             // 当点击"安装"按钮时，触发该方法
-            Log.d(TAG, "onInstallSelected: no nothing.");
+            Toast.makeText(AdSampleActivity.this, "got onInstallSelected event", Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    public static void launch(Context ctx, String url) {
-        Intent i = new Intent(ctx, WebActivity.class);
-        i.putExtra("url", url);
-        ctx.startActivity(i);
-    }
-
-    public static void launch(Context ctx, String data, String mimeType, String encoding) {
-        Intent i = new Intent(ctx, WebActivity.class);
-        i.putExtra("data", data);
-        i.putExtra("mimeType", mimeType);
-        i.putExtra("encoding", encoding);
+    public static void launch(Context ctx) {
+        Intent i = new Intent(ctx, AdSampleActivity.class);
         ctx.startActivity(i);
     }
 
