@@ -48,6 +48,7 @@
         </activity>
         <activity
             android:name=".AdSampleActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
 
         </activity>
