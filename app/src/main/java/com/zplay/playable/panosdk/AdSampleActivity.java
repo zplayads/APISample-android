@@ -5,11 +5,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
@@ -214,11 +212,15 @@ public class AdSampleActivity extends Activity {
             Toast.makeText(AdSampleActivity.this, "got onCloseSelected event", Toast.LENGTH_SHORT).show();
         }
 
-        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @JavascriptInterface
         public void onInstallSelected() {
             // 当点击"安装"按钮时，触发该方法
             Toast.makeText(AdSampleActivity.this, "got onInstallSelected event", Toast.LENGTH_SHORT).show();
+        }
+
+        @JavascriptInterface
+        public void onVideoEndLoading() {
+            Toast.makeText(AdSampleActivity.this, "onVideoEndLoading", Toast.LENGTH_SHORT).show();
         }
 
     }
