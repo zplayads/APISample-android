@@ -66,7 +66,35 @@
             android:onClick="showPreRenderedView"
             android:text="showPreRenderedView"
             android:textAllCaps="false" />
+
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Solution C: " />
+
+        <Button
+            android:id="@+id/load_vast_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="loadVastAd"
+            android:text="loadVastAd"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:onClick="showVastAd"
+            android:text="showVastAd"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
 
 </LinearLayout>
