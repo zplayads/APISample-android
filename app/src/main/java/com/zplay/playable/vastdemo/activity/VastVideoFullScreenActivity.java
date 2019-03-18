@@ -633,7 +633,12 @@ public class VastVideoFullScreenActivity extends Activity {
      **/
     private void onDisplayingMediaPageClick() {
         Log.i(TAG, "aaa onDisplayingMediaPageClick");
+        List<VideoClicksBean.ClickTracking> clickTrackings = BeanHelper.getVideoClicks(vast).getClickTrackings();
 
+        for (VideoClicksBean.ClickTracking tracking : clickTrackings) {
+            Log.i(TAG, "TrackingEvent click tracking url:" + tracking.getUrl());
+            eventReport(tracking.getUrl());
+        }
     }
 
     private void handleClickAction() {
