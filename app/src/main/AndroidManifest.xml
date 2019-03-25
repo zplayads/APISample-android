@@ -52,6 +52,12 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
 
         </activity>
+
+        <activity
+            android:name="com.zplay.playable.vastdemo.activity.VastVideoFullScreenActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+        </activity>
     </application>
 
 </manifest>
