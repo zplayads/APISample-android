@@ -13,17 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.KeyStore;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 public class MediaDownload extends AsyncTask<String, Void, String> {
     private static String TAG = "MediaDownload";
@@ -62,81 +51,29 @@ public class MediaDownload extends AsyncTask<String, Void, String> {
         try {
             Uri uri = Uri.parse(url);
             String scheme = uri.getScheme();
-            boolean isSsl = false;
-            if ("https".equals(scheme)) {
-                isSsl = true;
-            }
+
             URL u = new URL(url);
-            if (isSsl) {
-                TrustManager myX509TrustManager = new X509TrustManager() {
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
 
-                    @Override
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                    }
-
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                    }
-                };
-                KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-                KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-                kmf.init(trustStore, "password".toCharArray());
-                HttpsURLConnection conn = (HttpsURLConnection) u.openConnection();
-                // 设置忽略证书
-                conn.setHostnameVerifier(new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        return true;
-                    }
-                });
-                // 设置SSLContext
-                SSLContext sslcontext = SSLContext.getInstance("SSL", "AndroidOpenSSL");
-                sslcontext.init(kmf.getKeyManagers(), new TrustManager[]
-                        {
-                                myX509TrustManager
-                        }, new java.security.SecureRandom());
-
-                // 设置套接工厂
-                conn.setSSLSocketFactory(sslcontext.getSocketFactory());
-                conn.setDoInput(true);
-                conn.setConnectTimeout(1000);
-                conn.setInstanceFollowRedirects(true);
-                InputStream is = conn.getInputStream();
-                int len = 0;
-                byte[] buf = new byte[1024];
-                fos = new FileOutputStream(path);
-                while ((len = is.read(buf)) != -1) {
-                    fos.write(buf, 0, len);
+            File parentFile = new File(path).getParentFile();
+            if (!parentFile.exists()) {
+                boolean mkdirs = parentFile.mkdirs();
+                if (!mkdirs) {
+                    return false;
                 }
-                fos.flush();
-                return true;
-            } else {
-
-                File parentFile = new File(path).getParentFile();
-                if (!parentFile.exists()) {
-                    boolean mkdirs = parentFile.mkdirs();
-                    if (!mkdirs) {
-                        return false;
-                    }
-                }
-                HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-                conn.setDoInput(true);
-                conn.setConnectTimeout(1000);
-                conn.setInstanceFollowRedirects(true);
-                InputStream is = conn.getInputStream();
-                int len = 0;
-                byte[] buf = new byte[1024];
-                fos = new FileOutputStream(path);
-                while ((len = is.read(buf)) != -1) {
-                    fos.write(buf, 0, len);
-                }
-                fos.flush();
-                return true;
             }
+            HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+            conn.setDoInput(true);
+            conn.setConnectTimeout(1000);
+            conn.setInstanceFollowRedirects(true);
+            InputStream is = conn.getInputStream();
+            int len = 0;
+            byte[] buf = new byte[1024];
+            fos = new FileOutputStream(path);
+            while ((len = is.read(buf)) != -1) {
+                fos.write(buf, 0, len);
+            }
+            fos.flush();
+            return true;
 
         } catch (Exception e) {
             Log.e(TAG, "downloadFile error : " + e);
