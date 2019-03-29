@@ -4,6 +4,7 @@ package com.zplay.playable.vastdemo;
 public class AdModel {
     private String mAppMarketPackage;
     private String mTargetPackage;
+    private String mTargetUrl;
     private String mHtmlData;
     private String mAdm;
 
@@ -11,23 +12,30 @@ public class AdModel {
         mHtmlData = htmlData;
     }
 
-    String getAppMarketPackage() {
+    public String getAppMarketPackage() {
         return mAppMarketPackage;
     }
 
-    void setAppMarketPackage(String appMarketPackage) {
+    public void setAppMarketPackage(String appMarketPackage) {
         mAppMarketPackage = appMarketPackage;
     }
 
-    String getTargetPackage() {
+    public String getTargetPackage() {
         return mTargetPackage;
     }
 
-    void setTargetPackage(String targetPackage) {
+    public void setTargetPackage(String targetPackage) {
         mTargetPackage = targetPackage;
     }
+    public String getTargetUrl() {
+        return mTargetUrl;
+    }
 
-    String getHtmlData() {
+    public void setTargetUrl(String targetUrl) {
+        mTargetUrl = targetUrl;
+    }
+
+    public String getHtmlData() {
         return mHtmlData;
     }
 
