@@ -31,7 +31,7 @@ public class VideoClicksBean implements Serializable {
                 '}';
     }
 
-    public static class ClickTracking implements Serializable{
+    public static class ClickTracking implements Serializable {
         private String id;
         private String url;
 

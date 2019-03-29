@@ -1,12 +1,6 @@
 package com.zplay.playable.vastdemo.utils;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
-import android.os.Build;
-import android.util.DisplayMetrics;
-import android.view.Display;
-import android.view.WindowManager;
 
 public final class WindowSizeUtils {
 

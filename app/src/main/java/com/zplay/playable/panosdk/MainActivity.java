@@ -68,6 +68,7 @@ public class MainActivity extends ToolBarActivity {
     RecyclerView mAdList;
 
     UserConfig mConfig;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,7 +129,7 @@ public class MainActivity extends ToolBarActivity {
         }
     }
 
-    private void resetConfig(){
+    private void resetConfig() {
         mConfig.setLoadHTMLorURL(false);
         mConfig.setTestModule(false);
         mConfig.setPreRender(false);

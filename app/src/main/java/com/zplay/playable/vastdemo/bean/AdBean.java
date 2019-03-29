@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class AdBean implements Serializable {
     private String id;
-    private InLineBean   inLine;
+    private InLineBean inLine;
 
     public InLineBean getInLine() {
         return inLine;

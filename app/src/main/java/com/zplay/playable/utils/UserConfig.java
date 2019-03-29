@@ -14,12 +14,12 @@ public class UserConfig {
     private static final String SP_NAME = "zp.apiuser.config";
     private static final String USEWEBVIEW = "USEWEBVIEW";
     private static final String TESTMODULE = "TEXTMODULE";
-    private static final String LOADHTMLORURL= "LOADHTMLORURL";
+    private static final String LOADHTMLORURL = "LOADHTMLORURL";
     private static final String PRERENDER = "PRERENDER";
     private static final String SUPPORTMRAID = "SUPPORTMRAID";
     private static final String SUPPORTTAG = "SUPPORTTAG";
 
-    private static final String LOADHTMLORURL2= "LOADHTMLORURL2";
+    private static final String LOADHTMLORURL2 = "LOADHTMLORURL2";
     private static final String PRERENDER2 = "PRERENDER2";
 
     private SharedPreferences.Editor editor;

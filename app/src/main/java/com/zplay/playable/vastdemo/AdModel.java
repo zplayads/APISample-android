@@ -27,6 +27,7 @@ public class AdModel {
     public void setTargetPackage(String targetPackage) {
         mTargetPackage = targetPackage;
     }
+
     public String getTargetUrl() {
         return mTargetUrl;
     }

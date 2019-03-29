@@ -21,7 +21,7 @@ public class MediaFilesBean implements Serializable {
                 '}';
     }
 
-    public static class MediaFile implements Serializable{
+    public static class MediaFile implements Serializable {
         private String bitrate;
         private String delivery;
         private String height;
