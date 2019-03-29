@@ -1,5 +1,22 @@
 <resources>
-    <string name="app_name">APISimpleWeb</string>
+    <string name="app_name">PlayableAdsAPI</string>
     <string name="filter_view_http_gizmos">http gizmos</string>
     <string name="filter_view_example_gizmos">example gizmos</string>
+    <string name="settings">Settings</string>
+    <string name="title_activity_support_function1">SupportFunction = 1</string>
+    <string name="title_activity_support_function2">SupportFunction = 2</string>
+    <string name="title_demo_setting">Overall Settings</string>
+    <string name="title_vast">Support VAST</string>
+    <string name="useruiwebview">Use UI Web View</string>
+    <string name="testmodule">Test Module</string>
+    <string name="prerender">PreRender</string>
+    <string name="supportmraid">Support Mraid</string>
+    <string name="supporttag">Support "A" TAG</string>
+    <string name="title_independent">Independent Settings</string>
+    <string name="parse_network_vast">Parse_Network_Vast</string>
+    <string name="request">Request</string>
+    <string name="present">Present</string>
+    <string name="loadhtmlorurl">LoadHTMLorURL</string>
+
+
 </resources>

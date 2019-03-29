@@ -1,100 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.zplay.playable.panosdk.MainActivity">
+    android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/edit_text"
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/ad_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="input URL or HTML document"
-        android:maxHeight="250dp"
-        android:minHeight="80dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Solution A: " />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="show"
-            android:text="show"
-            android:textAllCaps="false" />
-    </LinearLayout>
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:background="#222" />
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Solution B: " />
-
-        <Button
-            android:id="@+id/load_doc_to_webview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="preRenderHtml"
-            android:text="preRenderHtml"
-            android:textAllCaps="false" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:onClick="showPreRenderedView"
-            android:text="showPreRenderedView"
-            android:textAllCaps="false" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Solution C: " />
-
-        <Button
-            android:id="@+id/load_vast_video"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="loadVastAd"
-            android:text="loadVastAd"
-            android:textAllCaps="false" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:onClick="showVastAd"
-            android:text="showVastAd"
-            android:textAllCaps="false" />
-
-    </LinearLayout>
+        android:layout_marginTop="10dp"
+        android:background="#fff"
+        android:overScrollMode="never" />
 
 </LinearLayout>

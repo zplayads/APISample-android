@@ -1,30 +1,37 @@
-package com.zplay.playable.panosdk;
+package com.zplay.playable.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.webkit.JavascriptInterface;
+import android.view.Gravity;
+import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.zplay.playable.panosdk.Assets;
+import com.zplay.playable.panosdk.WebViewController;
+import com.zplay.playable.vastdemo.utils.ResFactory;
+import com.zplay.playable.vastdemo.utils.WindowSizeUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-import static com.zplay.playable.panosdk.WebViewController.TEMP_KEY;
+import static com.zplay.playable.panosdk.WebViewController.FUNCTION2;
 
 /**
  * Description:
@@ -46,8 +53,8 @@ import static com.zplay.playable.panosdk.WebViewController.TEMP_KEY;
  * Created by lgd on 2018/10/11.
  */
 
-public class AdSampleActivity extends Activity {
-    private static final String TAG = "AdSampleActivity";
+public class AdWebViewFunctionActivity2 extends Activity {
+    private static final String TAG = "WBFunctionActivity2";
 
     WebView mWebView;
     WebViewController mWebViewController;
@@ -58,41 +65,66 @@ public class AdSampleActivity extends Activity {
         super.onCreate(savedInstanceState);
         WebView.setWebContentsDebuggingEnabled(true);
 
-        mWebViewController = WebViewController.getWebViewController(TEMP_KEY);
+        FrameLayout content = new FrameLayout(AdWebViewFunctionActivity2.this);
+        FrameLayout.LayoutParams param_content = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT);
+        param_content.gravity = Gravity.CENTER;
+        content.setLayoutParams(param_content);
+
+        mWebViewController = WebViewController.getWebViewController(FUNCTION2);
         if (mWebViewController == null) {
             Log.e(TAG, "onCreate: Cannot found WebView. Activity finished.");
             return;
         }
         mWebView = mWebViewController.getWebView();
 
-        mWebView.addJavascriptInterface(new ZPLAYAdsJavascriptInterface(), "ZPLAYAds");
         mWebView.setWebViewClient(new WebViewClient() {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                if (TextUtils.equals(request.getUrl().getScheme(), "mraid")) {
-                    handleMraidOpen(request.getUrl().toString());
-                    return true;
-                }
-                try {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, request.getUrl());
-                    startActivity(browserIntent);
-                } catch (Exception e) {
-                    Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl(), e);
-                }
+                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl().toString());
                 return true;
             }
 
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.startsWith("mraid")) {
-                    handleMraidOpen(url);
-                    return true;
-                }
-                return super.shouldOverrideUrlLoading(view, url);
+            public boolean shouldOverrideUrlLoading(WebView view, final String url) {
+                Log.d(TAG, "shouldOverrideUrlLoading: " + url);
+                return true;
             }
         });
 
+        mWebViewController.setWebViewJSListener(new WebViewController.WebViewJSListener() {
+            @Override
+            public void onCloseSelected() {
+                Toast.makeText(AdWebViewFunctionActivity2.this, "got onCloseSelected event", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.putExtra("close", 1);
+                setResult(30, intent);
+                finish();
+            }
+
+            @Override
+            public void onInstallSelected() {
+                Toast.makeText(AdWebViewFunctionActivity2.this, "got onInstallSelected event", Toast.LENGTH_SHORT).show();
+                try {
+                    if (mWebViewController.getTargetUrl().equals("")) {
+                        return;
+                    }
+
+                    Uri uri = Uri.parse(mWebViewController.getTargetUrl());
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(browserIntent);
+                } catch (Exception e) {
+                    Log.d(TAG, "onInstallSelected: " + mWebViewController.getTargetUrl(), e);
+                }
+            }
+
+            @Override
+            public void onVideoEndLoading() {
+                Toast.makeText(AdWebViewFunctionActivity2.this, "onVideoEndLoading", Toast.LENGTH_SHORT).show();
+            }
+        });
         if (!mWebViewController.isCachedHtmlData()) {
             if (mWebViewController.getHtmlData().startsWith("http")) {
                 loadUrl(mWebViewController.getHtmlData());
@@ -102,18 +134,29 @@ public class AdSampleActivity extends Activity {
                 Toast.makeText(this, "Html data is empty.", Toast.LENGTH_SHORT).show();
             }
         }
-        setContentView(mWebView);
-    }
 
-    private void handleMraidOpen(String url) {
-        try {
-            Log.d(TAG, "handleMraidOpen: " + url);
-            String targetUrl = url.replace("mraid://open?url=", "");
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URLDecoder.decode(targetUrl, "UTF-8")));
-            startActivity(browserIntent);
-        } catch (Exception e) {
-            Log.d(TAG, "handleMraidOpen: ", e);
-        }
+        ImageView iv_back = new ImageView(this);
+        Drawable back = ResFactory.getDrawableByAssets("ic_back", this);
+        iv_back.setBackgroundDrawable(back);
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra("close", 1);
+                setResult(30, intent);
+                finish();
+            }
+        });
+
+        FrameLayout.LayoutParams param_cancel = new FrameLayout.LayoutParams(WindowSizeUtils.dip2px(this, 35),
+                WindowSizeUtils.dip2px(this, 35));
+        param_cancel.rightMargin = WindowSizeUtils.dip2px(this, 6);
+        param_cancel.topMargin = WindowSizeUtils.dip2px(this, 6);
+
+        content.addView(mWebView);
+        content.addView(iv_back, param_cancel);
+
+        setContentView(content);
     }
 
     public void loadHtmlData(String data) {
@@ -204,30 +247,10 @@ public class AdSampleActivity extends Activity {
         }
     }
 
-    private class ZPLAYAdsJavascriptInterface {
 
-        @JavascriptInterface
-        public void onCloseSelected() {
-            // 可玩广告点击关闭按钮时，触发该方法
-            Toast.makeText(AdSampleActivity.this, "got onCloseSelected event", Toast.LENGTH_SHORT).show();
-        }
-
-        @JavascriptInterface
-        public void onInstallSelected() {
-            // 当点击"安装"按钮时，触发该方法
-            Toast.makeText(AdSampleActivity.this, "got onInstallSelected event", Toast.LENGTH_SHORT).show();
-        }
-
-        @JavascriptInterface
-        public void onVideoEndLoading() {
-            Toast.makeText(AdSampleActivity.this, "onVideoEndLoading", Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    public static void launch(Context ctx) {
-        Intent i = new Intent(ctx, AdSampleActivity.class);
-        ctx.startActivity(i);
+    public static void launch(Activity ctx) {
+        Intent i = new Intent(ctx, AdWebViewFunctionActivity2.class);
+        ctx.startActivityForResult(i, 30);
     }
 
 }

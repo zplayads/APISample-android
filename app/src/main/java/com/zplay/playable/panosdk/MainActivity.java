@@ -1,176 +1,141 @@
 package com.zplay.playable.panosdk;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.util.Log;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebView;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
-import com.zplay.playable.vastdemo.APIDataFetcher;
-import com.zplay.playable.vastdemo.AdModel;
-import com.zplay.playable.vastdemo.activity.VastVideoFullScreenActivity;
-import com.zplay.playable.vastdemo.bean.MediaFilesBean;
-import com.zplay.playable.vastdemo.bean.VAST;
-import com.zplay.playable.vastdemo.utils.BeanHelper;
-import com.zplay.playable.vastdemo.utils.VASTHelper;
-import com.zplay.playable.vastdemo.file.MediaDownload;
+import com.zplay.playable.activity.SupportFunctionActivity1;
+import com.zplay.playable.activity.SupportFunctionActivity2;
+import com.zplay.playable.activity.SupportVAST;
+import com.zplay.playable.activity.ToolBarActivity;
+import com.zplay.playable.utils.UserConfig;
 
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import static com.zplay.playable.panosdk.WebViewController.TEMP_KEY;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+import static com.zplay.playable.panosdk.MainActivity.AdType.SUPPORTFUNCTION1;
+import static com.zplay.playable.panosdk.MainActivity.AdType.SUPPORTFUNCTION2;
+import static com.zplay.playable.panosdk.MainActivity.AdType.SUPPORTVAST3;
+
+public class MainActivity extends ToolBarActivity {
     private static final String TAG = "MainActivityTag";
+    private static Activity mActivity;
 
-    EditText mEditText;
+    enum AdType {
+        SUPPORTFUNCTION1("Support Function=1", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SupportFunctionActivity1.launch(mActivity);
+            }
+        }),
+        SUPPORTFUNCTION2("Support Function=2", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SupportFunctionActivity2.launch(mActivity);
 
+            }
+        }),
+        SUPPORTVAST3("Support VAST 3.0", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SupportVAST.launch(mActivity);
+            }
+        });
+
+        private String name;
+        private View.OnClickListener clickListener;
+
+        AdType(String name, View.OnClickListener clickListener) {
+            this.name = name;
+            this.clickListener = clickListener;
+        }
+    }
+
+    private static List<AdType> sSupportArray =
+            Collections.unmodifiableList(Arrays.asList(SUPPORTFUNCTION1, SUPPORTFUNCTION2, SUPPORTVAST3));
+
+    @BindView(R.id.ad_list)
+    RecyclerView mAdList;
+
+    UserConfig mConfig;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mEditText = findViewById(R.id.edit_text);
-        mEditText.setText(DataHolder.HTML_DATA);
-        WebView.setWebContentsDebuggingEnabled(true);
+        mActivity = this;
+
+        mConfig = UserConfig.getInstance(this);
+        showSettingsButton();
+        setSettingName(ToolBarActivity.DEMO_SETTING);
+        ButterKnife.bind(this);
+        mAdList.setAdapter(new AdListAdapter(sSupportArray));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        DividerItemDecoration dividerItemDecoration =
+                new DividerItemDecoration(mAdList.getContext(), linearLayoutManager.getOrientation());
+        mAdList.setLayoutManager(linearLayoutManager);
+        mAdList.addItemDecoration(dividerItemDecoration);
+        resetConfig();
     }
 
-    public void show(View view) {
-        String trimContent = mEditText.getText().toString().trim();
-        if (TextUtils.isEmpty(trimContent)) {
-            Toast.makeText(this, "No be empty", Toast.LENGTH_SHORT).show();
-            return;
+    static class AdListAdapter extends RecyclerView.Adapter<AdListVH> {
+
+        List<AdType> mData;
+
+        AdListAdapter(List<AdType> data) {
+            mData = data;
         }
 
-        WebViewController webViewController = new WebViewController(this);
-        webViewController.setHtmlData(getReformatData(trimContent));
-        WebViewController.storeWebViewController(TEMP_KEY, webViewController);
 
-        AdSampleActivity.launch(this);
-    }
-
-    public void showPreRenderedView(View view) {
-        WebViewController webViewController = WebViewController.getWebViewController(TEMP_KEY);
-        if (webViewController == null || !webViewController.isCachedHtmlData()) {
-            Toast.makeText(this, "WebView not hit onPageFinished yet.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        AdSampleActivity.launch(this);
-    }
-
-    public void preRenderHtml(View view) {
-        String rawData = mEditText.getText().toString().trim();
-        if (TextUtils.isEmpty(rawData)) {
-            Toast.makeText(this, "input data is empty.", Toast.LENGTH_SHORT).show();
-            return;
+        @Override
+        public AdListVH onCreateViewHolder(ViewGroup parent, int viewType) {
+            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ad_list, parent, false);
+            return new AdListVH(view);
         }
 
-        WebViewController webViewController = new WebViewController(this);
-        webViewController.preRenderHtml(getReformatData(rawData), new WebViewController.WebViewListener() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                Log.d(TAG, "onPageFinished: " + url);
-                Toast.makeText(MainActivity.this, "onPageFinished", Toast.LENGTH_SHORT).show();
+        @Override
+        public void onBindViewHolder(AdListVH holder, int position) {
+            holder.adName.setText(mData.get(position).name);
+            holder.itemView.setOnClickListener(mData.get(position).clickListener);
+        }
+
+        @Override
+        public int getItemCount() {
+            if (mData != null) {
+                return mData.size();
             }
-
-            @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                Log.d(TAG, "onReceivedError: " + request.getUrl());
-            }
-        });
-        WebViewController.storeWebViewController(TEMP_KEY, webViewController);
-    }
-    public VAST vastDate;
-    public String videoPath;
-    private boolean vastIsLoding;
-    public void loadVastAd(View view){
-        try {
-             if(vastIsLoding){
-                 showToast("VAST 广告正在加载，请稍后");
-                 return;
-             }
-            vastIsLoding = true;
-            APIDataFetcher.fetchAdData(new APIDataFetcher.AdResult() {
-                @Override
-                public void onResult(AdModel adModel) {
-                    if(adModel != null && !adModel.equals("") && adModel.getAdm() != null){
-                        try {
-                            VASTHelper.getInstance().parseVAST(new ByteArrayInputStream(adModel.getAdm().getBytes("UTF-8")), new VASTHelper.ParseVastCallback() {
-                                @Override
-                                public void onResult(VAST vast) {
-                                    vastDate = vast;
-                                    showToast("VAST 开始加载视频");
-                                    MediaFilesBean.MediaFile mediaFile = BeanHelper.getMediaFiles(vast).getMediaFiles().get(0);
-                                    Log.i(TAG, "vast video start download videoUrl ：" + mediaFile.getVideoUrl());
-                                    new MediaDownload(MainActivity.this) {
-                                        @Override
-                                        protected void onPostExecute(String dataPath) {
-                                            super.onPostExecute(dataPath);
-                                            vastIsLoding = false;
-                                            if (dataPath != null) {
-                                                Log.i(TAG, "vast video loaded dataPath：" + dataPath);
-                                                videoPath = dataPath;
-                                                showToast("VAST 视频加载完成");
-                                            } else {
-                                                Log.i(TAG, "vast video load failed dataPath：");
-                                                videoPath = dataPath;
-                                                showToast("VAST 视频加载失败");
-                                            }
-                                        }
-                                    }.execute(mediaFile.getVideoUrl());
-                                }
-                            });
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                            vastIsLoding = false;
-                        }
-                    }else{
-                        showToast("服务端返回VAST数据异常");
-                        vastIsLoding = false;
-                    }
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-            vastIsLoding = false;
+            return 0;
         }
     }
 
-    public void showVastAd(View view){
-        if(vastDate != null && videoPath != null){
-            showToast("开始展示VAST视频");
-            Intent intent = new Intent();
-            intent.setClass(MainActivity.this, VastVideoFullScreenActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("vast", vastDate);
-            bundle.putString("path", videoPath);
-            intent.putExtras(bundle);
-            MainActivity.this.startActivity(intent);
-        }else{
-            Log.e(TAG, "show VAST ad file vastDate is null ？ ：" + (vastDate != null) + ",videoPath : " + videoPath);
-            showToast("展示VAST失败");
+    static class AdListVH extends RecyclerView.ViewHolder {
+        @BindView(R.id.ad_name)
+        TextView adName;
+
+        AdListVH(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 
-    public void showToast(final String msg){
-        MainActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void resetConfig(){
+        mConfig.setLoadHTMLorURL(false);
+        mConfig.setTestModule(false);
+        mConfig.setPreRender(false);
+        mConfig.setUseWebview(false);
+        mConfig.setLoadHTMLorURL2(false);
+        mConfig.setPreRender2(false);
+        mConfig.setSupportMraid(false);
+        mConfig.setSupportTag(false);
     }
 
-    private String getReformatData(String raw) {
-        raw = raw.replaceAll("\\\\\"", "\"");
-        raw = raw.replaceAll("\\\n", " ");
-        raw = raw.replaceAll("\\\t", " ");
-        raw = raw.replaceAll("\\\\r\\\\n", " ");
-        return raw;
-    }
 }
