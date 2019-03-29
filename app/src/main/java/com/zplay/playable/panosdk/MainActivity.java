@@ -71,6 +71,7 @@ public class MainActivity extends ToolBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        UserConfig.getInstance(this);
         setContentView(R.layout.activity_main);
         mActivity = this;
 
