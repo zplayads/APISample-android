@@ -180,8 +180,12 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
 
     public void present(View view) {
         WebViewController webViewController = WebViewController.getWebViewController(FUNCTION2);
-        if (webViewController == null || !webViewController.isCachedHtmlData()) {
-            setInfo("present failed, WebView not hit onPageFinished yet");
+        if (webViewController == null) {
+            setInfo("present failed, WebView not initiated yet");
+            return;
+        }
+        if (mConfig.isPreRender2() && !webViewController.isCachedHtmlData()) {
+            setInfo("present failed, WebView not prepared yet");
             return;
         }
 

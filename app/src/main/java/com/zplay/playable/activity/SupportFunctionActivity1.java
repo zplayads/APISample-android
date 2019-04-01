@@ -150,7 +150,7 @@ public class SupportFunctionActivity1 extends ToolBarActivity {
                                 setInfo("present");
                                 show(adModel.getHtmlData());
                             } else {
-                                setInfo("mPreRenderSwitch");
+                                setInfo("pre-rendering");
                                 preRenderHtml(adModel.getHtmlData());
                             }
                         }
@@ -179,8 +179,13 @@ public class SupportFunctionActivity1 extends ToolBarActivity {
 
     public void present(View view) {
         WebViewController webViewController = WebViewController.getWebViewController(FUNCTION1);
-        if (webViewController == null || !webViewController.isCachedHtmlData()) {
-            setInfo("present failed, WebView not hit onPageFinished yet");
+        if (webViewController == null) {
+            setInfo("present failed, WebView not initiated yet");
+            return;
+        }
+
+        if (mConfig.isPreRender() && !webViewController.isCachedHtmlData()) {
+            setInfo("present failed, WebView not hit prepared yet");
             return;
         }
 
@@ -201,7 +206,7 @@ public class SupportFunctionActivity1 extends ToolBarActivity {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 Log.d(TAG, "onReceivedError: " + request.getUrl());
-                setInfo("preparedFailed");
+                setInfo("prepared failed");
             }
         });
         WebViewController.storeWebViewController(FUNCTION1, webViewController);
