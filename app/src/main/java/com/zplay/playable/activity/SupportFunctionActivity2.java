@@ -126,7 +126,11 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
         if (isRequestDetaNoEmpty(dataEditText.getText().toString().trim())) {
             if (mConfig.isLoadHTMLorURL2()) {
                 setInfo("load html ad");
-                preRenderHtml(dataEditText.getText().toString(), null);
+                if (mConfig.isPreRender()) {
+                    preRenderHtml(dataEditText.getText().toString(), null);
+                } else {
+                    show(dataEditText.getText().toString().trim(), null);
+                }
                 return;
             }
 
@@ -168,8 +172,7 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
 
 
     public void show(final String html, String targetUrl) {
-
-        WebViewController webViewController = new WebViewController(SupportFunctionActivity2.this, 1);
+        WebViewController webViewController = new WebViewController(SupportFunctionActivity2.this, 2);
         webViewController.setHtmlData(getReformatData(html));
         webViewController.setTargetUrl(targetUrl);
         WebViewController.storeWebViewController(FUNCTION2, webViewController);

@@ -4,16 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -22,8 +19,6 @@ import com.zplay.playable.panosdk.WebViewController;
 import com.zplay.playable.utils.UserConfig;
 import com.zplay.playable.vastdemo.utils.ResFactory;
 import com.zplay.playable.vastdemo.utils.WindowSizeUtils;
-
-import java.net.URLDecoder;
 
 import static com.zplay.playable.panosdk.WebViewController.FUNCTION1;
 import static com.zplay.playable.panosdk.WebViewController.loadHtmlData;
@@ -58,54 +53,7 @@ public class AdWebViewFunctionActivity1 extends Activity {
         }
         mWebView = mWebViewController.getWebView();
 
-        mWebView.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl().toString());
-                if (TextUtils.equals(request.getUrl().getScheme(), "mraid") && mConfig.isSupportMraid()) {
-                    handleMraidOpen(request.getUrl().toString());
-                    return true;
-                }
-
-                if (mConfig.isSupportTag()) {
-                    try {
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, request.getUrl());
-                        startActivity(browserIntent);
-                    } catch (Exception e) {
-                        Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl(), e);
-                    }
-                    return true;
-                } else {
-                    return super.shouldOverrideUrlLoading(view, request.getUrl().toString());
-                }
-
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, final String url) {
-                Log.d(TAG, "shouldOverrideUrlLoading: " + url);
-                if (url.startsWith("mraid") && mConfig.isSupportMraid()) {
-                    handleMraidOpen(url);
-                    return true;
-                }
-
-                if (mConfig.isSupportTag()) {
-                    try {
-                        Uri uri = Uri.parse(url);
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        startActivity(browserIntent);
-                    } catch (Exception e) {
-                        Log.d(TAG, "shouldOverrideUrlLoading: " + url, e);
-                    }
-                    return true;
-                } else {
-                    return super.shouldOverrideUrlLoading(view, url);
-                }
-            }
-        });
-
-        if (!mWebViewController.isCachedHtmlData()) {
+        if (!mConfig.isPreRender()) {
             if (mWebViewController.getHtmlData().startsWith("http")) {
                 loadUrl(mWebView, mWebViewController.getHtmlData());
             } else if (!TextUtils.isEmpty(mWebViewController.getHtmlData())) {
@@ -137,19 +85,36 @@ public class AdWebViewFunctionActivity1 extends Activity {
 
         setContentView(content);
 
+        mWebViewController.setWebViewPageClosedListener(new WebViewController.WebViewPageClosedListener() {
+            @Override
+            public void onPageClosed() {
+                finish();
+            }
+        });
     }
 
-    private void handleMraidOpen(String url) {
-        try {
-            Log.d(TAG, "handleMraidOpen: " + url);
-            String targetUrl = url.replace("mraid://open?url=", "");
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URLDecoder.decode(targetUrl, "UTF-8")));
-            startActivity(browserIntent);
-        } catch (Exception e) {
-            Log.d(TAG, "handleMraidOpen: ", e);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mConfig.isSupportMraid()) {
+            mWebViewController.setWebViewPageFinishedListener(new WebViewController.WebViewPageFinishedListener() {
+                @Override
+                public void onPageFinished() {
+                    Log.d(TAG, "fire fireViewableChangeEvent(true)");
+                    mWebView.loadUrl("javascript:mraid.fireViewableChangeEvent(true)");
+                }
+            });
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mConfig.isSupportMraid()) {
+            Log.d(TAG, "fire fireViewableChangeEvent(false)");
+            mWebView.loadUrl("javascript:mraid.fireViewableChangeEvent(false)");
+        }
+    }
 
     @Override
     protected void onDestroy() {

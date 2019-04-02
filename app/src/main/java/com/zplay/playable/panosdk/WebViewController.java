@@ -1,6 +1,8 @@
 package com.zplay.playable.panosdk;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -14,6 +16,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.zplay.playable.utils.UserConfig;
 
@@ -22,29 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-
-/**
- * Description:
- * <p>
- * mraid 注入过程参考资料：
- * https://www.programcreek.com/java-api-examples/index.php?source_dir=MobFox-Android-SDK-master/src/main/java/com/adsdk/sdk/mraid/MraidView.java
- * <p>
- * 原理为，使用 <head><script>mraid.js</script> 替换 HTML 中的 <head> 标签
- * <p>
- * <p>
- * 还有一种注入方法，是直接使用 webview.evaluateJavascript(js, new ValueCallback<String>(..)) 来注入
- * 如：https://github.com/nexage/sourcekit-mraid-android/blob/master/src/src/org/nexage/sourcekit/mraid/MRAIDView.java
- * <p>
- * 实践过程中，直接使用 webview.evaluateJavascript 注入，在执行 webview.load(htmlDocUrl) 后，在 htmlDocUrl
- * 里无法找到 window.mraid 对象；先执行 webview.load(htmlDocUrl) ，然后在 onPageFinished 回调中执行 webview.evaluateJavascript，
- * 可以在 htmlDocUrl 中找到 window.mraid 对象，但此对象应在加载完成之前添入到 htmlDocUrl，所以没有使用这个方法。
- * <p>
- * <p>
- * Created by lgd on 2018/10/11.
- */
 
 public class WebViewController {
     private static final String TAG = "WebViewController";
@@ -61,7 +45,12 @@ public class WebViewController {
     private WebViewJSListener mWebViewJSListener;
     private boolean isCachedHtmlData;
 
-    public WebViewController(@NonNull Context context, int supportFunctionCode) {
+    private WebViewPageFinishedListener mWebViewPageFinishedListener;
+    private WebViewPageClosedListener mWebViewPageClosedListener;
+
+    public WebViewController(@NonNull final Context context, int supportFunctionCode) {
+
+        final UserConfig userConfig = UserConfig.getInstance(context);
 
         mWebView = new WebView(context);
 
@@ -73,7 +62,6 @@ public class WebViewController {
             mWebView.addJavascriptInterface(new ZPLAYAdsJavascriptInterface(), "ZPLAYAds");
         }
 
-
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -81,6 +69,14 @@ public class WebViewController {
                 isCachedHtmlData = true;
                 if (mWebViewListener != null) {
                     mWebViewListener.onPageFinished(view, url);
+                }
+                if (userConfig.isSupportMraid() || userConfig.isSupportMraid2()) {
+                    mWebView.loadUrl("javascript:mraid.setPlacementType(mraid.PLACEMENT_TYPES.INTERSTITIAL)");
+                    mWebView.loadUrl("javascript:mraid.fireStateChangeEvent(mraid.STATES.DEFAULT)");
+                    mWebView.loadUrl("javascript:mraid.fireReadyEvent()");
+                    if (mWebViewPageFinishedListener != null) {
+                        mWebViewPageFinishedListener.onPageFinished();
+                    }
                 }
             }
 
@@ -91,9 +87,81 @@ public class WebViewController {
                     mWebViewListener.onReceivedError(view, request, error);
                 }
             }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl().toString());
+                if (TextUtils.equals(request.getUrl().getScheme(), "mraid") && (userConfig.isSupportMraid() || userConfig.isSupportMraid())) {
+                    handleMraidCommand(context, request.getUrl().toString());
+                    return true;
+                }
+
+                if (userConfig.isSupportTag()) {
+                    try {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, request.getUrl());
+                        context.startActivity(browserIntent);
+                    } catch (Exception e) {
+                        Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl(), e);
+                    }
+                    return true;
+                } else {
+                    return super.shouldOverrideUrlLoading(view, request.getUrl().toString());
+                }
+
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, final String url) {
+                Log.d(TAG, "shouldOverrideUrlLoading: " + url);
+                if (url.startsWith("mraid") && userConfig.isSupportMraid() || userConfig.isSupportMraid()) {
+                    handleMraidCommand(context, url);
+                    return true;
+                }
+
+                if (userConfig.isSupportTag()) {
+                    try {
+                        Uri uri = Uri.parse(url);
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
+                        context.startActivity(browserIntent);
+                    } catch (Exception e) {
+                        Log.d(TAG, "shouldOverrideUrlLoading: " + url, e);
+                    }
+                    return true;
+                } else {
+                    return super.shouldOverrideUrlLoading(view, url);
+                }
+            }
         });
     }
 
+    private void handleMraidCommand(@NonNull Context context, @NonNull String url) {
+        if (url.startsWith("mraid://open")) {
+            handleMraidOpen(context, url);
+        } else if (url.startsWith("mraid://close")) {
+            handleMraidClose(context);
+        } else {
+            Toast.makeText(context, "Mraid command: " + url, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void handleMraidOpen(@NonNull Context context, String url) {
+        try {
+            Log.d(TAG, "handleMraidOpen: " + url);
+            String targetUrl = url.replace("mraid://open?url=", "");
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URLDecoder.decode(targetUrl, "UTF-8")));
+            context.startActivity(browserIntent);
+        } catch (Exception e) {
+            Log.d(TAG, "handleMraidOpen: ", e);
+        }
+    }
+
+    private void handleMraidClose(Context context) {
+        if (mWebViewPageClosedListener != null) {
+            mWebViewPageClosedListener.onPageClosed();
+            return;
+        }
+        Toast.makeText(context, "Mraid Closed", Toast.LENGTH_SHORT).show();
+    }
 
     public void preRenderHtml(@NonNull String htmlData, @Nullable WebViewListener listener) {
         if (mWebView == null) {
@@ -115,7 +183,8 @@ public class WebViewController {
             return;
         }
 
-        if (!UserConfig.getInstance(null).isSupportMraid()) {
+        if (!UserConfig.getInstance(null).isSupportMraid() &&
+                !UserConfig.getInstance(null).isSupportMraid2()) {
             webView.loadDataWithBaseURL(null, data, "text/html", "UTF-8", null);
             return;
         }
@@ -126,7 +195,7 @@ public class WebViewController {
                     "</body></html>";
         }
 
-        // Inject the MRAID JavaScript bridge.
+//         Inject the MRAID JavaScript bridge.
         data = data.replace("<head>", "<head><script>" + Assets.MRAID_JS + "</script>");
 
         webView.loadDataWithBaseURL(null, data, "text/html", "UTF-8", null);
@@ -142,7 +211,8 @@ public class WebViewController {
             return;
         }
 
-        if (!UserConfig.getInstance(null).isSupportMraid()) {
+        if (!UserConfig.getInstance(null).isSupportMraid() &&
+                !UserConfig.getInstance(null).isSupportMraid2()) {
             webView.loadUrl(url);
             return;
         }
@@ -266,6 +336,19 @@ public class WebViewController {
     }
 
 
+    public void setWebViewPageFinishedListener(@NonNull WebViewPageFinishedListener listener) {
+        if (isCachedHtmlData) {
+            listener.onPageFinished();
+            return;
+        }
+        mWebViewPageFinishedListener = listener;
+    }
+
+    public void setWebViewPageClosedListener(WebViewPageClosedListener listener) {
+        mWebViewPageClosedListener = listener;
+    }
+
+
     public interface WebViewJSListener {
         void onCloseSelected();
 
@@ -273,6 +356,14 @@ public class WebViewController {
 
         void onVideoEndLoading();
 
+    }
+
+    public interface WebViewPageFinishedListener {
+        void onPageFinished();
+    }
+
+    public interface WebViewPageClosedListener {
+        void onPageClosed();
     }
 
     public class ZPLAYAdsJavascriptInterface {

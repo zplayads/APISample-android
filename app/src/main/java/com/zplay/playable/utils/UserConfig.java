@@ -17,6 +17,7 @@ public class UserConfig {
     private static final String LOADHTMLORURL = "LOADHTMLORURL";
     private static final String PRERENDER = "PRERENDER";
     private static final String SUPPORTMRAID = "SUPPORTMRAID";
+    private static final String SUPPORTMRAID2 = "SUPPORTMRAID2";
     private static final String SUPPORTTAG = "SUPPORTTAG";
 
     private static final String LOADHTMLORURL2 = "LOADHTMLORURL2";
@@ -77,6 +78,14 @@ public class UserConfig {
 
     public boolean setSupportMraid(boolean supportMraid) {
         return editor.putBoolean(SUPPORTMRAID, supportMraid).commit();
+    }
+
+    public boolean isSupportMraid2() {
+        return sp.getBoolean(SUPPORTMRAID2, false);
+    }
+
+    public boolean setSupportMraid2(boolean supportMraid) {
+        return editor.putBoolean(SUPPORTMRAID2, supportMraid).commit();
     }
 
     public boolean isSupportTag() {

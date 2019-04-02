@@ -11,14 +11,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.zplay.playable.panosdk.WebViewController;
+import com.zplay.playable.utils.UserConfig;
 import com.zplay.playable.vastdemo.utils.ResFactory;
 import com.zplay.playable.vastdemo.utils.WindowSizeUtils;
 
@@ -31,12 +30,14 @@ public class AdWebViewFunctionActivity2 extends Activity {
 
     WebView mWebView;
     WebViewController mWebViewController;
+    UserConfig mConfig;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         WebView.setWebContentsDebuggingEnabled(true);
+        mConfig = UserConfig.getInstance(this);
 
         FrameLayout content = new FrameLayout(AdWebViewFunctionActivity2.this);
         FrameLayout.LayoutParams param_content = new FrameLayout.LayoutParams(
@@ -51,21 +52,6 @@ public class AdWebViewFunctionActivity2 extends Activity {
             return;
         }
         mWebView = mWebViewController.getWebView();
-
-        mWebView.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl().toString());
-                return true;
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, final String url) {
-                Log.d(TAG, "shouldOverrideUrlLoading: " + url);
-                return true;
-            }
-        });
 
         mWebViewController.setWebViewJSListener(new WebViewController.WebViewJSListener() {
             @Override
@@ -130,6 +116,36 @@ public class AdWebViewFunctionActivity2 extends Activity {
         content.addView(iv_back, param_cancel);
 
         setContentView(content);
+
+        mWebViewController.setWebViewPageClosedListener(new WebViewController.WebViewPageClosedListener() {
+            @Override
+            public void onPageClosed() {
+                finish();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mConfig.isSupportMraid()) {
+            mWebViewController.setWebViewPageFinishedListener(new WebViewController.WebViewPageFinishedListener() {
+                @Override
+                public void onPageFinished() {
+                    Log.d(TAG, "fire fireViewableChangeEvent(true)");
+                    mWebView.loadUrl("javascript:mraid.fireViewableChangeEvent(true)");
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mConfig.isSupportMraid()) {
+            Log.d(TAG, "fire fireViewableChangeEvent(false)");
+            mWebView.loadUrl("javascript:mraid.fireViewableChangeEvent(false)");
+        }
     }
 
     @Override

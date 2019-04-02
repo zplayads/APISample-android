@@ -126,7 +126,11 @@ public class SupportFunctionActivity1 extends ToolBarActivity {
         if (isRequestDetaNoEmpty(dataEditText.getText().toString().trim())) {
             if (mConfig.isLoadHTMLorURL()) {
                 setInfo("load html ad");
-                preRenderHtml(dataEditText.getText().toString());
+                if (mConfig.isPreRender()) {
+                    preRenderHtml(dataEditText.getText().toString());
+                } else {
+                    show(dataEditText.getText().toString().trim());
+                }
                 return;
             }
 

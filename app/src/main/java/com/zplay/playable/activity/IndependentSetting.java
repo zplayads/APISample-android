@@ -66,7 +66,7 @@ public class IndependentSetting extends ToolBarActivity {
         if (mFunctionCode == 2) {
             mLoadHtmlSwitch.setChecked(mConfig.isLoadHTMLorURL2());
             mPreRenderSwitch.setChecked(mConfig.isPreRender2());
-            mSupportMraidLayout.setVisibility(View.INVISIBLE);
+            mSupportMraidSwitch.setChecked(mConfig.isSupportMraid2());
             mSupportATagLayout.setVisibility(View.INVISIBLE);
             mLineView.setVisibility(View.INVISIBLE);
         }
@@ -91,6 +91,7 @@ public class IndependentSetting extends ToolBarActivity {
         } else {
             mConfig.setPreRender2(mPreRenderSwitch.isChecked());
             mConfig.setLoadHTMLorURL2(mLoadHtmlSwitch.isChecked());
+            mConfig.setSupportMraid2(mSupportMraidSwitch.isChecked());
         }
     }
 
