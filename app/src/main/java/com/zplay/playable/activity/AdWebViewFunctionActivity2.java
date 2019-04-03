@@ -27,6 +27,7 @@ import static com.zplay.playable.panosdk.WebViewController.loadUrl;
 
 public class AdWebViewFunctionActivity2 extends Activity {
     private static final String TAG = "WBFunctionActivity2";
+    static final int REQUEST_CODE_ACTIVITY2 = 30;
 
     WebView mWebView;
     WebViewController mWebViewController;
@@ -59,7 +60,7 @@ public class AdWebViewFunctionActivity2 extends Activity {
                 Toast.makeText(AdWebViewFunctionActivity2.this, "got onCloseSelected event", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.putExtra("close", 1);
-                setResult(30, intent);
+                setResult(Activity.RESULT_OK, intent);
                 finish();
             }
 
@@ -159,7 +160,7 @@ public class AdWebViewFunctionActivity2 extends Activity {
 
     public static void launch(Activity ctx) {
         Intent i = new Intent(ctx, AdWebViewFunctionActivity2.class);
-        ctx.startActivityForResult(i, 30);
+        ctx.startActivityForResult(i, REQUEST_CODE_ACTIVITY2);
     }
 
 }

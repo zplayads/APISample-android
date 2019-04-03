@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import butterknife.BindView;
 
+import static com.zplay.playable.activity.AdWebViewFunctionActivity2.REQUEST_CODE_ACTIVITY2;
 import static com.zplay.playable.panosdk.WebViewController.FUNCTION2;
 
 public class SupportFunctionActivity2 extends ToolBarActivity {
@@ -123,7 +124,7 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
     }
 
     public void request(View view) {
-        if (isRequestDetaNoEmpty(dataEditText.getText().toString().trim())) {
+        if (isRequestDataNoEmpty(dataEditText.getText().toString().trim())) {
             if (mConfig.isLoadHTMLorURL2()) {
                 setInfo("load html ad");
                 if (mConfig.isPreRender()) {
@@ -134,7 +135,7 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
                 return;
             }
 
-            if (!isRequestDetaValid(dataEditText.getText().toString().trim())) {
+            if (!isRequestDataValid(dataEditText.getText().toString().trim())) {
                 return;
             }
 
@@ -172,12 +173,12 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
 
 
     public void show(final String html, String targetUrl) {
-        WebViewController webViewController = new WebViewController(SupportFunctionActivity2.this, 2);
+        WebViewController webViewController = new WebViewController(this, 2);
         webViewController.setHtmlData(getReformatData(html));
         webViewController.setTargetUrl(targetUrl);
         WebViewController.storeWebViewController(FUNCTION2, webViewController);
 
-        AdWebViewFunctionActivity2.launch(SupportFunctionActivity2.this);
+        AdWebViewFunctionActivity2.launch(this);
 
     }
 
@@ -193,12 +194,12 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
         }
 
         setInfo("present");
-        AdWebViewFunctionActivity2.launch(SupportFunctionActivity2.this);
+        AdWebViewFunctionActivity2.launch(this);
     }
 
     public void preRenderHtml(String html, String targetUrl) {
 
-        WebViewController webViewController = new WebViewController(SupportFunctionActivity2.this, 2);
+        WebViewController webViewController = new WebViewController(this, 2);
         webViewController.setTargetUrl(targetUrl);
         webViewController.preRenderHtml(getReformatData(html), new WebViewController.WebViewListener() {
             @Override
@@ -219,12 +220,10 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case 30:
-                if (resultCode == 30) {
-                    int isClose = data.getIntExtra("close", 0);
-                    if (isClose == 1) {
-                        setInfo("close");
-                    }
+            case REQUEST_CODE_ACTIVITY2:
+                int isClose = data.getIntExtra("close", 0);
+                if (isClose == 1) {
+                    setInfo("close");
                 }
                 break;
             default:
@@ -238,14 +237,11 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
         ctx.startActivity(i);
     }
 
-    private boolean isRequestDetaNoEmpty(String data) {
-        if (TextUtils.isEmpty(data) || data.equals("")) {
-            return false;
-        }
-        return true;
+    private boolean isRequestDataNoEmpty(String data) {
+        return !TextUtils.isEmpty(data) && !data.equals("");
     }
 
-    private boolean isRequestDetaValid(String data) {
+    private boolean isRequestDataValid(String data) {
 
         try {
             JSONObject requestData = new JSONObject(data);
