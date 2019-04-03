@@ -101,9 +101,6 @@ public class AdWebViewFunctionActivity2 extends Activity {
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtra("close", 1);
-                setResult(30, intent);
                 finish();
             }
         });
@@ -147,6 +144,14 @@ public class AdWebViewFunctionActivity2 extends Activity {
             Log.d(TAG, "fire fireViewableChangeEvent(false)");
             mWebView.loadUrl("javascript:mraid.fireViewableChangeEvent(false)");
         }
+    }
+
+    @Override
+    public void finish() {
+        Intent intent = new Intent();
+        intent.putExtra("close", 1);
+        setResult(Activity.RESULT_OK, intent);
+        super.finish();
     }
 
     @Override
