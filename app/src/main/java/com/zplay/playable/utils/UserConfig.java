@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 
 public class UserConfig {
     private static final String SP_NAME = "zp.apiuser.config";
-    private static final String USEWEBVIEW = "USEWEBVIEW";
     private static final String TESTMODULE = "TEXTMODULE";
     private static final String LOADHTMLORURL = "LOADHTMLORURL";
     private static final String PRERENDER = "PRERENDER";
@@ -38,14 +37,6 @@ public class UserConfig {
     private UserConfig(Context ctx) {
         sp = ctx.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         editor = sp.edit();
-    }
-
-    public boolean setUseWebview(boolean useWebView) {
-        return editor.putBoolean(USEWEBVIEW, useWebView).commit();
-    }
-
-    public boolean isUseWebview() {
-        return sp.getBoolean(USEWEBVIEW, false);
     }
 
     public boolean setPreRender(boolean preRender) {
