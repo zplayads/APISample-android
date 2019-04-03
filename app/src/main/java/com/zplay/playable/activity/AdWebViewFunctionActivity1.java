@@ -128,7 +128,4 @@ public class AdWebViewFunctionActivity1 extends Activity {
         Intent i = new Intent(ctx, AdWebViewFunctionActivity1.class);
         ctx.startActivityForResult(i, 20);
     }
-
-    public void onBackPressed() {
-    }
 }
