@@ -128,7 +128,7 @@ public class AdWebViewFunctionActivity2 extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (mConfig.isSupportMraid()) {
+        if (mConfig.isSupportMraid2()) {
             mWebViewController.setWebViewPageFinishedListener(new WebViewController.WebViewPageFinishedListener() {
                 @Override
                 public void onPageFinished() {
@@ -142,7 +142,7 @@ public class AdWebViewFunctionActivity2 extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (mConfig.isSupportMraid()) {
+        if (mConfig.isSupportMraid2()) {
             Log.d(TAG, "fire fireViewableChangeEvent(false)");
             mWebView.loadUrl("javascript:mraid.fireViewableChangeEvent(false)");
         }
