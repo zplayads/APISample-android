@@ -189,7 +189,7 @@ public class SupportVAST extends ToolBarActivity {
                                     @Override
                                     public void onResult(VAST vast) {
                                         vastDeta = vast;
-                                        setInfo("VAST mPreRenderSwitch start");
+                                        setInfo("VAST loading start");
                                         MediaFilesBean.MediaFile mediaFile = BeanHelper.getMediaFiles(vast).getMediaFiles().get(0);
                                         Log.i(TAG, "VAST video start download videoUrl ：" + mediaFile.getVideoUrl());
                                         new MediaDownload(SupportVAST.this) {
@@ -200,14 +200,14 @@ public class SupportVAST extends ToolBarActivity {
                                                 if (dataPath != null) {
                                                     Log.i(TAG, "vast video loaded dataPath：" + dataPath);
                                                     mediaPath = dataPath;
-                                                    setInfo("VAST mPreRenderSwitch success");
+                                                    setInfo("VAST load success");
                                                     onRemoveMediaPlayer();
 
                                                     initMedia();
                                                 } else {
                                                     Log.i(TAG, "vast video load failed dataPath：");
                                                     mediaPath = dataPath;
-                                                    setInfo("VAST mPreRenderSwitch failed");
+                                                    setInfo("VAST load failed");
                                                 }
                                             }
                                         }.execute(mediaFile.getVideoUrl());

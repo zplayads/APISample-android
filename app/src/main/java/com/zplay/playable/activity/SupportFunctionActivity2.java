@@ -154,7 +154,7 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
                                 setInfo("present");
                                 show(adModel.getHtmlData(), adModel.getTargetUrl());
                             } else {
-                                setInfo("mPreRenderSwitch");
+                                setInfo("pre loading");
                                 preRenderHtml(adModel.getHtmlData(), adModel.getTargetUrl());
                             }
                         }

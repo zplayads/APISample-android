@@ -66,6 +66,7 @@ public class WebViewController {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                Log.d(TAG, "onPageFinished: ");
                 isCachedHtmlData = true;
                 if (mWebViewListener != null) {
                     mWebViewListener.onPageFinished(view, url);

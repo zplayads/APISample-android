@@ -84,7 +84,7 @@ public class AdWebViewFunctionActivity2 extends Activity {
                 Toast.makeText(AdWebViewFunctionActivity2.this, "onVideoEndLoading", Toast.LENGTH_SHORT).show();
             }
         });
-        if (!mWebViewController.isCachedHtmlData()) {
+        if (!mConfig.isPreRender2()) {
             if (mWebViewController.getHtmlData().startsWith("http")) {
                 loadUrl(mWebView, mWebViewController.getHtmlData());
             } else if (!TextUtils.isEmpty(mWebViewController.getHtmlData())) {
