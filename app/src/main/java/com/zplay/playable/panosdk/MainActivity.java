@@ -134,9 +134,12 @@ public class MainActivity extends ToolBarActivity {
         mConfig.setTestModule(false);
         mConfig.setPreRender(false);
         mConfig.setUseWebview(false);
+        mConfig.setSupportMraid(false);
+
         mConfig.setLoadHTMLorURL2(false);
         mConfig.setPreRender2(false);
-        mConfig.setSupportMraid(false);
+        mConfig.setSupportMraid2(false);
+
         mConfig.setSupportTag(false);
     }
 
