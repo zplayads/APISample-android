@@ -21,7 +21,7 @@ public class TrackingEventsBean implements Serializable {
                 '}';
     }
 
-    public static class Tracking implements Serializable{
+    public static class Tracking implements Serializable {
         private String event;
         private String url;
 

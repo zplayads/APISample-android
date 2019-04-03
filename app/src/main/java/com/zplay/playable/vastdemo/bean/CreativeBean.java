@@ -1,7 +1,6 @@
 package com.zplay.playable.vastdemo.bean;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class CreativeBean implements Serializable {
     private LinearBean linear;

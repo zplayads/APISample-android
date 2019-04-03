@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -22,33 +21,33 @@ import butterknife.ButterKnife;
  */
 
 public class IndependentSetting extends ToolBarActivity {
-    private static String TAG = "IndependentSetting";
 
+    private static final String EXTRA_TAG = "code";
 
-    @BindView(R.id.loadhtml)
-    SwitchCompat loadhtml;
+    @BindView(R.id.load_html)
+    SwitchCompat mLoadHtmlSwitch;
 
-    @BindView(R.id.prerender)
-    SwitchCompat prerender;
+    @BindView(R.id.pre_render)
+    SwitchCompat mPreRenderSwitch;
 
-    @BindView(R.id.supportmraid)
-    SwitchCompat supportMraid;
+    @BindView(R.id.support_mraid)
+    SwitchCompat mSupportMraidSwitch;
 
-    @BindView(R.id.supporttag)
-    SwitchCompat supportTag;
+    @BindView(R.id.support_a_tag)
+    SwitchCompat mSupportTagSwitch;
 
-    @BindView(R.id.supportmraid_layout)
-    LinearLayout supportmraid_layout;
+    @BindView(R.id.support_mraid_layout)
+    LinearLayout mSupportMraidLayout;
 
-    @BindView(R.id.supporttag_layout)
-    LinearLayout supporttag_layout;
+    @BindView(R.id.support_a_tag_layout)
+    LinearLayout mSupportATagLayout;
 
     @BindView(R.id.line)
-    View line;
+    View mLineView;
 
     UserConfig mConfig;
 
-    private int functionCode = -1;
+    private int mFunctionCode = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,51 +57,48 @@ public class IndependentSetting extends ToolBarActivity {
         showUpAction();
         mConfig = UserConfig.getInstance(this);
         Intent intent = getIntent();
-        functionCode = intent.getIntExtra("code", -1);
-        if (functionCode == 2) {
-            loadhtml.setChecked(mConfig.isLoadHTMLorURL2());
-            prerender.setChecked(mConfig.isPreRender2());
-            supportmraid_layout.setVisibility(View.INVISIBLE);
-            supporttag_layout.setVisibility(View.INVISIBLE);
-            line.setVisibility(View.INVISIBLE);
-        }
-
-        if (functionCode == 1) {
-            loadhtml.setChecked(mConfig.isLoadHTMLorURL());
-            prerender.setChecked(mConfig.isPreRender());
-            supportMraid.setChecked(mConfig.isSupportMraid());
-            supportTag.setChecked(mConfig.isSupportTag());
-        }
-
+        mFunctionCode = intent.getIntExtra(EXTRA_TAG, -1);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-    }
+        if (mFunctionCode == 2) {
+            mLoadHtmlSwitch.setChecked(mConfig.isLoadHTMLorURL2());
+            mPreRenderSwitch.setChecked(mConfig.isPreRender2());
+            mSupportMraidSwitch.setChecked(mConfig.isSupportMraid2());
+            mSupportATagLayout.setVisibility(View.INVISIBLE);
+            mLineView.setVisibility(View.INVISIBLE);
+        }
 
+        if (mFunctionCode == 1) {
+            mLoadHtmlSwitch.setChecked(mConfig.isLoadHTMLorURL());
+            mPreRenderSwitch.setChecked(mConfig.isPreRender());
+            mSupportMraidSwitch.setChecked(mConfig.isSupportMraid());
+            mSupportTagSwitch.setChecked(mConfig.isSupportTag());
+        }
+
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(TAG, "prerender: " + prerender.isChecked());
-        Log.i(TAG, "supportMraid: " + supportMraid.isChecked());
-        Log.i(TAG, "supportTag: " + supportTag.isChecked());
-        if (functionCode == 1) {
-            mConfig.setPreRender(prerender.isChecked());
-            mConfig.setSupportMraid(supportMraid.isChecked());
-            mConfig.setSupportTag(supportTag.isChecked());
-            mConfig.setLoadHTMLorURL(loadhtml.isChecked());
+        if (mFunctionCode == 1) {
+            mConfig.setPreRender(mPreRenderSwitch.isChecked());
+            mConfig.setSupportMraid(mSupportMraidSwitch.isChecked());
+            mConfig.setSupportTag(mSupportTagSwitch.isChecked());
+            mConfig.setLoadHTMLorURL(mLoadHtmlSwitch.isChecked());
         } else {
-            mConfig.setPreRender2(prerender.isChecked());
-            mConfig.setLoadHTMLorURL2(loadhtml.isChecked());
+            mConfig.setPreRender2(mPreRenderSwitch.isChecked());
+            mConfig.setLoadHTMLorURL2(mLoadHtmlSwitch.isChecked());
+            mConfig.setSupportMraid2(mSupportMraidSwitch.isChecked());
         }
     }
 
 
     public static void launch(Context ctx, int code) {
         Intent i = new Intent(ctx, IndependentSetting.class);
-        i.putExtra("code", code);
+        i.putExtra(EXTRA_TAG, code);
         ctx.startActivity(i);
     }
 }

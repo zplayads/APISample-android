@@ -115,10 +115,10 @@ public class VASTHelper {
             CreativesBean creatives = getCreatives(vast);
             CreativeBean creative = new CreativeBean();
 
-            for(int i = 0; i<xmlPullParser.getAttributeCount() ; i++){
-                if(xmlPullParser.getAttributeName(i).equals("id")){
+            for (int i = 0; i < xmlPullParser.getAttributeCount(); i++) {
+                if (xmlPullParser.getAttributeName(i).equals("id")) {
                     creative.setAdID(xmlPullParser.getAttributeValue(i));
-                }else if(xmlPullParser.getAttributeName(i).equals("sequence")){
+                } else if (xmlPullParser.getAttributeName(i).equals("sequence")) {
                     creative.setSequence(xmlPullParser.getAttributeValue(i));
                 }
             }
@@ -201,22 +201,18 @@ public class VASTHelper {
             MediaFilesBean mediaFiles = linear.getMediaFiles();
             List<MediaFilesBean.MediaFile> mediaFileList = mediaFiles.getMediaFiles();
             MediaFilesBean.MediaFile mediaFile = mediaFileList.get(0);
-            for(int i = 0; i<xmlPullParser.getAttributeCount() ; i++){
-                if(xmlPullParser.getAttributeName(i).equals("bitrate")){
+            for (int i = 0; i < xmlPullParser.getAttributeCount(); i++) {
+                if (xmlPullParser.getAttributeName(i).equals("bitrate")) {
                     mediaFile.setBitrate(xmlPullParser.getAttributeValue(i));
-                }else if(xmlPullParser.getAttributeName(i).equals("delivery")){
+                } else if (xmlPullParser.getAttributeName(i).equals("delivery")) {
                     mediaFile.setDelivery(xmlPullParser.getAttributeValue(i));
-                }
-                else if(xmlPullParser.getAttributeName(i).equals("height")){
+                } else if (xmlPullParser.getAttributeName(i).equals("height")) {
                     mediaFile.setHeight(xmlPullParser.getAttributeValue(i));
-                }
-                else if(xmlPullParser.getAttributeName(i).equals("id")){
+                } else if (xmlPullParser.getAttributeName(i).equals("id")) {
                     mediaFile.setId(xmlPullParser.getAttributeValue(i));
-                }
-                else if(xmlPullParser.getAttributeName(i).equals("type")){
+                } else if (xmlPullParser.getAttributeName(i).equals("type")) {
                     mediaFile.setType(xmlPullParser.getAttributeValue(i));
-                }
-                else if(xmlPullParser.getAttributeName(i).equals("width")){
+                } else if (xmlPullParser.getAttributeName(i).equals("width")) {
                     mediaFile.setWidth(xmlPullParser.getAttributeValue(i));
                 }
             }

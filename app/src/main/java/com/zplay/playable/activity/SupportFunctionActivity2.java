@@ -126,7 +126,11 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
         if (isRequestDetaNoEmpty(dataEditText.getText().toString().trim())) {
             if (mConfig.isLoadHTMLorURL2()) {
                 setInfo("load html ad");
-                preRenderHtml(dataEditText.getText().toString(), null);
+                if (mConfig.isPreRender()) {
+                    preRenderHtml(dataEditText.getText().toString(), null);
+                } else {
+                    show(dataEditText.getText().toString().trim(), null);
+                }
                 return;
             }
 
@@ -150,7 +154,7 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
                                 setInfo("present");
                                 show(adModel.getHtmlData(), adModel.getTargetUrl());
                             } else {
-                                setInfo("prerender");
+                                setInfo("pre loading");
                                 preRenderHtml(adModel.getHtmlData(), adModel.getTargetUrl());
                             }
                         }
@@ -168,8 +172,7 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
 
 
     public void show(final String html, String targetUrl) {
-
-        WebViewController webViewController = new WebViewController(SupportFunctionActivity2.this, 1);
+        WebViewController webViewController = new WebViewController(SupportFunctionActivity2.this, 2);
         webViewController.setHtmlData(getReformatData(html));
         webViewController.setTargetUrl(targetUrl);
         WebViewController.storeWebViewController(FUNCTION2, webViewController);
@@ -180,8 +183,12 @@ public class SupportFunctionActivity2 extends ToolBarActivity {
 
     public void present(View view) {
         WebViewController webViewController = WebViewController.getWebViewController(FUNCTION2);
-        if (webViewController == null || !webViewController.isCachedHtmlData()) {
-            setInfo("present failed, WebView not hit onPageFinished yet");
+        if (webViewController == null) {
+            setInfo("present failed, WebView not initiated yet");
+            return;
+        }
+        if (mConfig.isPreRender2() && !webViewController.isCachedHtmlData()) {
+            setInfo("present failed, WebView not prepared yet");
             return;
         }
 

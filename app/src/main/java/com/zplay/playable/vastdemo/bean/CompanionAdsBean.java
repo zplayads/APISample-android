@@ -21,7 +21,7 @@ public class CompanionAdsBean implements Serializable {
                 '}';
     }
 
-    public static class Companion implements Serializable{
+    public static class Companion implements Serializable {
         private String width;
         private String height;
         private String HTMLResource;
@@ -79,7 +79,7 @@ public class CompanionAdsBean implements Serializable {
                     '}';
         }
 
-       public static class TrackingEvents {
+        public static class TrackingEvents {
             private List<Tracking> mTrackingList;
 
             public List<Tracking> getTrackingList() {

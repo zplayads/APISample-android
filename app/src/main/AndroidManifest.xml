@@ -17,7 +17,8 @@
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="n">
 
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_name">
             <intent-filter>
@@ -51,46 +52,41 @@
         <activity
             android:name="com.zplay.playable.activity.AdWebViewFunctionActivity1"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
         <activity
             android:name="com.zplay.playable.activity.AdWebViewFunctionActivity2"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
         <activity
             android:name="com.zplay.playable.vastdemo.activity.VastVideoFullScreenActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
         <activity
             android:name="com.zplay.playable.activity.SupportFunctionActivity1"
             android:label="@string/title_activity_support_function1"
             android:configChanges="fontScale|orientation|keyboardHidden|locale|navigation|screenSize|uiMode"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            />
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name="com.zplay.playable.activity.SupportFunctionActivity2"
             android:label="@string/title_activity_support_function2"
             android:configChanges="fontScale|orientation|keyboardHidden|locale|navigation|screenSize|uiMode"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            />
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name="com.zplay.playable.activity.SupportVAST"
             android:label="@string/title_vast"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            />
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name="com.zplay.playable.activity.SettingsActivity"
             android:label="@string/title_demo_setting"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            />
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name="com.zplay.playable.activity.IndependentSetting"
             android:label="@string/title_independent"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            />
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
     </application>
 
 </manifest>

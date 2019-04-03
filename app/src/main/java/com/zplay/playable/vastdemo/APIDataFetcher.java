@@ -102,7 +102,7 @@ public class APIDataFetcher {
     }
 
 
-    public static void fetchVASTAdData(@NonNull final String data,final boolean isDebug,final AdResult result) {
+    public static void fetchVASTAdData(@NonNull final String data, final boolean isDebug, final AdResult result) {
 
         new Thread(new Runnable() {
             @Override

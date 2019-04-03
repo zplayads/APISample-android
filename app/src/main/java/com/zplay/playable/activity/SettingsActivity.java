@@ -5,12 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 
 import com.zplay.playable.panosdk.R;
 import com.zplay.playable.utils.UserConfig;
-
-import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,13 +19,8 @@ import butterknife.ButterKnife;
  */
 
 public class SettingsActivity extends ToolBarActivity {
-    private static String TAG = "SettingsActivity";
-
-    @BindView(R.id.useruiwebview)
-    SwitchCompat useruiwebview;
-
     @BindView(R.id.testmodule)
-    SwitchCompat testmodule;
+    SwitchCompat mTestModuleSwitch;
 
     UserConfig mConfig;
 
@@ -39,42 +31,19 @@ public class SettingsActivity extends ToolBarActivity {
         ButterKnife.bind(this);
         showUpAction();
         mConfig = UserConfig.getInstance(this);
-
-        useruiwebview.setChecked(mConfig.isUseWebview());
-        testmodule.setChecked(mConfig.isTestModule());
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mTestModuleSwitch.setChecked(mConfig.isTestModule());
     }
 
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(TAG, "user ui webview: " + useruiwebview.isChecked());
-        Log.i(TAG, "test module: " + testmodule.isChecked());
-        mConfig.setUseWebview(useruiwebview.isChecked());
-        mConfig.setTestModule(testmodule.isChecked());
-    }
-
-
-    private boolean myDeleteFile(String filePath) {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            return true;
-        }
-        if (!file.isDirectory()) {
-            return file.delete();
-        }
-
-        File[] files = file.listFiles();
-        for (File f : files) {
-            myDeleteFile(f.getPath());
-        }
-        return file.delete();
+        mConfig.setTestModule(mTestModuleSwitch.isChecked());
     }
 
     public static void launch(Context ctx) {

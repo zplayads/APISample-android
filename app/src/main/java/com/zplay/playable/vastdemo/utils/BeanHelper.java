@@ -12,7 +12,7 @@ import com.zplay.playable.vastdemo.bean.VideoClicksBean;
 
 public class BeanHelper {
 
-    public static MediaFilesBean getMediaFiles(VAST vast){
+    public static MediaFilesBean getMediaFiles(VAST vast) {
         LinearBean linear = getLinear(vast);
         return linear.getMediaFiles();
     }
