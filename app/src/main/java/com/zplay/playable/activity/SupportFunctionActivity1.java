@@ -124,7 +124,7 @@ public class SupportFunctionActivity1 extends ToolBarActivity {
     }
 
     public void request(View view) {
-        if (isRequestDetaNoEmpty(dataEditText.getText().toString().trim())) {
+        if (isRequestDataNoEmpty(dataEditText.getText().toString().trim())) {
             if (mConfig.isLoadHTMLorURL()) {
                 setInfo("load html ad");
                 if (mConfig.isPreRender()) {
@@ -135,7 +135,7 @@ public class SupportFunctionActivity1 extends ToolBarActivity {
                 return;
             }
 
-            if (!isRequestDetaValid(dataEditText.getText().toString().trim())) {
+            if (!isRequestDataValid(dataEditText.getText().toString().trim())) {
                 return;
             }
 
@@ -237,11 +237,11 @@ public class SupportFunctionActivity1 extends ToolBarActivity {
         ctx.startActivity(i);
     }
 
-    private boolean isRequestDetaNoEmpty(String data) {
+    private boolean isRequestDataNoEmpty(String data) {
         return !TextUtils.isEmpty(data) && !data.equals("");
     }
 
-    private boolean isRequestDetaValid(String data) {
+    private boolean isRequestDataValid(String data) {
 
         try {
             JSONObject requestData = new JSONObject(data);
