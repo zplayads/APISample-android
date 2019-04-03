@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import butterknife.BindView;
 
+import static com.zplay.playable.activity.AdWebViewFunctionActivity1.REQUEST_CODE_ACTIVITY1;
 import static com.zplay.playable.panosdk.WebViewController.FUNCTION1;
 
 public class SupportFunctionActivity1 extends ToolBarActivity {
@@ -173,11 +174,11 @@ public class SupportFunctionActivity1 extends ToolBarActivity {
 
     public void show(final String html) {
 
-        WebViewController webViewController = new WebViewController(SupportFunctionActivity1.this, 1);
+        WebViewController webViewController = new WebViewController(this, 1);
         webViewController.setHtmlData(getReformatData(html));
         WebViewController.storeWebViewController(FUNCTION1, webViewController);
 
-        AdWebViewFunctionActivity1.launch(SupportFunctionActivity1.this);
+        AdWebViewFunctionActivity1.launch(this);
 
     }
 
@@ -194,12 +195,12 @@ public class SupportFunctionActivity1 extends ToolBarActivity {
         }
 
         setInfo("present");
-        AdWebViewFunctionActivity1.launch(SupportFunctionActivity1.this);
+        AdWebViewFunctionActivity1.launch(this);
     }
 
     public void preRenderHtml(String html) {
 
-        WebViewController webViewController = new WebViewController(SupportFunctionActivity1.this, 1);
+        WebViewController webViewController = new WebViewController(this, 1);
         webViewController.preRenderHtml(getReformatData(html), new WebViewController.WebViewListener() {
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -219,12 +220,10 @@ public class SupportFunctionActivity1 extends ToolBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case 20:
-                if (resultCode == 20) {
-                    int isClose = data.getIntExtra("close", 0);
-                    if (isClose == 1) {
-                        setInfo("close");
-                    }
+            case REQUEST_CODE_ACTIVITY1:
+                int isClose = data.getIntExtra("close", 0);
+                if (isClose == 1) {
+                    setInfo("close");
                 }
                 break;
             default:
@@ -239,10 +238,7 @@ public class SupportFunctionActivity1 extends ToolBarActivity {
     }
 
     private boolean isRequestDetaNoEmpty(String data) {
-        if (TextUtils.isEmpty(data) || data.equals("")) {
-            return false;
-        }
-        return true;
+        return !TextUtils.isEmpty(data) && !data.equals("");
     }
 
     private boolean isRequestDetaValid(String data) {

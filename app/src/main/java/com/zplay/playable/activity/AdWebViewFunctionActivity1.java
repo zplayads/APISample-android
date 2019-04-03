@@ -26,6 +26,7 @@ import static com.zplay.playable.panosdk.WebViewController.loadUrl;
 
 public class AdWebViewFunctionActivity1 extends Activity {
     private static final String TAG = "WBFunctionActivity1";
+    static final int REQUEST_CODE_ACTIVITY1 = 20;
 
     WebView mWebView;
     WebViewController mWebViewController;
@@ -70,7 +71,7 @@ public class AdWebViewFunctionActivity1 extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.putExtra("close", 1);
-                setResult(20, intent);
+                setResult(Activity.RESULT_OK, intent);
                 finish();
             }
         });
@@ -126,6 +127,6 @@ public class AdWebViewFunctionActivity1 extends Activity {
 
     public static void launch(Activity ctx) {
         Intent i = new Intent(ctx, AdWebViewFunctionActivity1.class);
-        ctx.startActivityForResult(i, 20);
+        ctx.startActivityForResult(i, REQUEST_CODE_ACTIVITY1);
     }
 }
