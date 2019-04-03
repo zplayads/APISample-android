@@ -136,6 +136,7 @@ public class WebViewController {
     }
 
     private void handleMraidCommand(@NonNull Context context, @NonNull String url) {
+        Log.d(TAG, "handleMraidCommand: " + url);
         if (url.startsWith("mraid://open")) {
             handleMraidOpen(context, url);
         } else if (url.startsWith("mraid://close")) {
