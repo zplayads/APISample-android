@@ -173,9 +173,6 @@ public class SupportVAST extends ToolBarActivity {
                     return;
                 }
 
-                if (!isRequestDetaValid(dataEditText.getText().toString().trim())) {
-                    return;
-                }
 
                 setInfo("VAST ad request start");
                 vastIsLoding = true;
@@ -889,22 +886,6 @@ public class SupportVAST extends ToolBarActivity {
             return false;
         }
         return true;
-    }
-
-    private boolean isRequestDetaValid(String data) {
-
-        try {
-            JSONObject requestData = new JSONObject(data);
-            int support_function = requestData.getInt("support_function");
-            if (support_function == 1) {
-                return true;
-            }
-            setInfo("request error : function != 2");
-            return false;
-        } catch (Exception e) {
-            setInfo("request error : " + e.toString());
-            return false;
-        }
     }
 }
 
