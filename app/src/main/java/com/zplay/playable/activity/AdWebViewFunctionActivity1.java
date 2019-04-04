@@ -56,9 +56,9 @@ public class AdWebViewFunctionActivity1 extends Activity {
 
         if (!mConfig.isPreRender()) {
             if (mWebViewController.getHtmlData().startsWith("http")) {
-                loadUrl(mWebView, mWebViewController.getHtmlData());
+                loadUrl(mWebView, mWebViewController.getHtmlData(), mConfig.isSupportMraid());
             } else if (!TextUtils.isEmpty(mWebViewController.getHtmlData())) {
-                loadHtmlData(mWebView, mWebViewController.getHtmlData());
+                loadHtmlData(mWebView, mWebViewController.getHtmlData(), mConfig.isSupportMraid());
             } else {
                 Toast.makeText(this, "Html data is empty.", Toast.LENGTH_SHORT).show();
             }
