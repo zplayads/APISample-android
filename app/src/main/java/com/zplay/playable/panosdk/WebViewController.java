@@ -92,7 +92,7 @@ public class WebViewController {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl().toString());
-                if (TextUtils.equals(request.getUrl().getScheme(), "mraid") && (userConfig.isSupportMraid() || userConfig.isSupportMraid())) {
+                if (TextUtils.equals(request.getUrl().getScheme(), "mraid")) {
                     handleMraidCommand(context, request.getUrl().toString());
                     return true;
                 }
@@ -114,7 +114,7 @@ public class WebViewController {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, final String url) {
                 Log.d(TAG, "shouldOverrideUrlLoading: " + url);
-                if (url.startsWith("mraid") && userConfig.isSupportMraid() || userConfig.isSupportMraid()) {
+                if (url.startsWith("mraid")) {
                     handleMraidCommand(context, url);
                     return true;
                 }
@@ -165,7 +165,7 @@ public class WebViewController {
         Toast.makeText(context, "Mraid Closed", Toast.LENGTH_SHORT).show();
     }
 
-    public void preRenderHtml(@NonNull String htmlData, @Nullable WebViewListener listener) {
+    public void preRenderHtml(@NonNull String htmlData, @Nullable WebViewListener listener, boolean supportMraid) {
         if (mWebView == null) {
             Log.d(TAG, "preRenderHtml: webview already destroy, recreated it again.");
             return;
@@ -173,20 +173,19 @@ public class WebViewController {
 
         mWebViewListener = listener;
         if (htmlData.startsWith("http")) {
-            loadUrl(mWebView, htmlData);
+            loadUrl(mWebView, htmlData, supportMraid);
         } else {
-            loadHtmlData(mWebView, htmlData);
+            loadHtmlData(mWebView, htmlData, supportMraid);
         }
     }
 
 
-    public static void loadHtmlData(WebView webView, String data) {
+    public static void loadHtmlData(WebView webView, String data, boolean supportMraid) {
         if (data == null) {
             return;
         }
 
-        if (!UserConfig.getInstance(null).isSupportMraid() &&
-                !UserConfig.getInstance(null).isSupportMraid2()) {
+        if (!supportMraid) {
             webView.loadDataWithBaseURL(null, data, "text/html", "UTF-8", null);
             return;
         }
@@ -203,7 +202,7 @@ public class WebViewController {
         webView.loadDataWithBaseURL(null, data, "text/html", "UTF-8", null);
     }
 
-    public static void loadUrl(WebView webView, String url) {
+    public static void loadUrl(WebView webView, String url, boolean supportMraid) {
         if (url == null) {
             return;
         }
@@ -213,16 +212,15 @@ public class WebViewController {
             return;
         }
 
-        if (!UserConfig.getInstance(null).isSupportMraid() &&
-                !UserConfig.getInstance(null).isSupportMraid2()) {
+        if (supportMraid) {
+            fetchHtmlAndLoad(webView, url, supportMraid);
+        } else {
             webView.loadUrl(url);
-            return;
         }
 
-        fetchHtmlAndLoad(webView, url);
     }
 
-    private static void fetchHtmlAndLoad(final WebView webView, @NonNull final String urlStr) {
+    private static void fetchHtmlAndLoad(final WebView webView, @NonNull final String urlStr, final boolean supportMraid) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -252,7 +250,7 @@ public class WebViewController {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            loadHtmlData(webView, html);
+                            loadHtmlData(webView, html, supportMraid);
                         }
                     });
                 } catch (Exception e) {

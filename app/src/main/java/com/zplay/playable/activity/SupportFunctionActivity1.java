@@ -213,7 +213,7 @@ public class SupportFunctionActivity1 extends ToolBarActivity {
                 Log.d(TAG, "onReceivedError: " + request.getUrl());
                 setInfo("prepared failed");
             }
-        });
+        }, mConfig.isSupportMraid());
         WebViewController.storeWebViewController(FUNCTION1, webViewController);
     }
 
